@@ -75,7 +75,7 @@ ok -e "✅ Utilitaires système installés avec succès.\n"
 # ----------------------------
 # Apache
 # ----------------------------
-info "📦 Installion du serveur web Apache2"
+info "📦 Installation du serveur web Apache2"
 sudo apt-get install -y apache2 &> /dev/null 2>&1
 ok "✅ Apache2 installé avec succès.\n"
 info "🔧 Configuration d'Apache2"
@@ -117,8 +117,8 @@ sudo tee /etc/apache2/sites-available/999-default-ssl.conf > /dev/null <<EOF
     SSLCertificateFile /etc/apache2/ssl/wildcard.local.pem
     SSLCertificateKeyFile /etc/apache2/ssl/wildcard.local-key.pem
 
-    ErrorLog /var/www/stack/logs/default_ssl_error.log
-    CustomLog /var/www/stack/logs/default_ssl_access.log combined
+    ErrorLog /var/www/infra/logs/default_ssl_error.log
+    CustomLog /var/www/infra/logs/default_ssl_access.log combined
 </VirtualHost>
 EOF
 a2ensite 999-default &> /dev/null 2>&1
