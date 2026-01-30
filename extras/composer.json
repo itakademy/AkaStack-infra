@@ -1,0 +1,8 @@
+{
+    "name": "project/docs",
+    "description": "Project documentation renderer",
+    "type": "project",
+    "require": {
+        "fastvolt/markdown": "^0.2.5"
+    }
+}
