@@ -62,12 +62,76 @@ fi
 # System update
 # ----------------------------
 info "📦 Mise à jour du système.."
-sudo apt-get upgrade -y -qq
+sudo apt-get upgrade -y -qq &> /dev/null 2>&1
 ok "✅ Système mis à jour avec succès.\n"
 
 # ----------------------------
 # System utilities
 # ----------------------------
 info "📦 Installation des utilitaires système..."
-sudo apt-get install -y --no-install-recommends build-essential libssl-dev git curl wget zip unzip git-core ca-certificates apt-transport-https locate software-properties-common dirmngr
+sudo apt-get install -y --no-install-recommends build-essential libssl-dev git curl wget zip unzip git-core ca-certificates apt-transport-https locate software-properties-common dirmngr &> /dev/null 2>&1
 ok -e "✅ Utilitaires système installés avec succès.\n"
+
+# ----------------------------
+# Apache
+# ----------------------------
+info "📦 Installion du serveur web Apache2"
+sudo apt-get install -y apache2 &> /dev/null 2>&1
+ok "✅ Apache2 installé avec succès.\n"
+info "🔧 Configuration d'Apache2"
+# Enable required Apache modules
+sudo a2enmod rewrite headers expires &> /dev/null 2>&1
+# Define global server name
+echo "ServerName ${VM_DOMAIN}" > /etc/apache2/conf-available/servername.conf
+sudo a2enconf servername
+# Install certificates
+sudo mkdir -p /etc/apache2/ssl
+sudo cp /var/www/infra/certs/wildcard.local.key /etc/apache2/ssl/wildcard.local.key
+sudo cp /var/www/infra/certs/wildcard.local.pem /etc/apache2/ssl/wildcard.local.dev.pem
+sudo chmod 600 /etc/apache2/ssl/wildcard.local.key
+sudo chmod 644 /etc/apache2/ssl/wildcard.local.pem
+# Disable default 000 site and move it at 999
+a2dissite 000-default
+# Redirect IP-based access to FQDN-based SSL access
+sudo tee /etc/apache2/sites-available/999-default.conf > /dev/null <<EOF
+<VirtualHost *:80>
+    ServerName ${VM_DOMAIN}
+    Redirect permanent / https://${VM_DOMAIN}/
+</VirtualHost>
+EOF
+sudo tee /etc/apache2/sites-available/999-default-ssl.conf > /dev/null <<EOF
+<VirtualHost *:443>
+    ServerName ${VM_DOMAIN}
+    DocumentRoot /var/www/html
+
+    <Directory /var/www/html>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    <FilesMatch \.php$>
+        SetHandler "proxy:unix:/run/php/php8.4-fpm.sock|fcgi://localhost"
+    </FilesMatch>
+
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/ssl/wildcard.local.key.pem
+    SSLCertificateKeyFile /etc/apache2/ssl/wildcard.local.key.key
+
+    ErrorLog /var/www/stack/logs/default_ssl_error.log
+    CustomLog /var/www/stack/logs/default_ssl_access.log combined
+</VirtualHost>
+EOF
+a2ensite 999-default
+a2ensite 999-default-ssl
+sudo rm -rf /etc/apache2/sites-available/000-default.conf
+sudo rm -rf /etc/apache2/sites-available/default-ssl.conf
+# Create logs dir
+sudo mkdir -p /var/www/stack/logs &> /dev/null 2>&1
+# Map extras content to /var/www/html
+sudo rm -rf /var/www/html
+sudo ln -s /var/www/stack/extras /var/www/html
+# Activate required Apache modules and restart
+info "🔁 Redémarage du service Apache2..."
+sudo a2enmod ssl proxy proxy_fcgi proxy_http
+sudo systemctl restart apache2 &> /dev/null 2>&1
+ok "✅ Apache a redémarré.\n"
