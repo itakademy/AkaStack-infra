@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
   end
 
   RANDOM_SUFFIX = rand(1000..9999)
-  VM_NAME       = #{ENV.fetch("VM_NAME")}-#{ENV.fetch("RANDOM_SUFFIX")}
+  VM_NAME       = "akastack"-#{ENV.fetch("RANDOM_SUFFIX")}
 
   # ================================
   # Base box (Parallels)
@@ -38,8 +38,8 @@ Vagrant.configure("2") do |config|
   #   v.name   = VM_NAME
   # end
 
-  config.vm.box = ENV.fetch("VM_BASE")
-  config.vm.box_version = ENV.fetch("VM_BASE_VERSION")
+  config.vm.box = "bento/ubuntu-24.04"
+  config.vm.box_version = "202502.21.0"
 
   # ================================
   # VM identity & network
@@ -72,7 +72,7 @@ Vagrant.configure("2") do |config|
   # Synced folders
   # ================================
   config.vm.synced_folder "./", "/vagrant", disabled: true
-  config.vm.synced_folder "./", "/var/www/", owner: "vagrant", group: "www-data"
+  config.vm.synced_folder "./../", "/var/www/", owner: "vagrant", group: "www-data"
 
   # ================================
   # Provisioning
@@ -91,6 +91,5 @@ Vagrant.configure("2") do |config|
   # ================================
 
   puts "▶ VM #{ENV.fetch("VM_NAME")}"
-  puts "▶ Version #{ENV.fetch("VM_BASE_VERSION")}"
   puts "▶ IP=#{ENV.fetch("VM_IP")} | CPU=#{ENV.fetch("VM_CPUS")} | RAM=#{ENV.fetch("VM_MEMORY")}MB"
 end
