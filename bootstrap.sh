@@ -135,3 +135,178 @@ info "🔁 Redémarage du service Apache2..."
 sudo a2enmod ssl proxy proxy_fcgi proxy_http &> /dev/null 2>&1
 sudo systemctl restart apache2 &> /dev/null 2>&1
 ok "✅ Apache a redémarré.\n"
+
+# ----------------------------
+# MariaDB
+# ----------------------------
+info "📦 Installation de MariaDB..."
+export DEBIAN_FRONTEND=noninteractive
+sudo -E apt-get install -y mariadb-server &> /dev/null 2>&1
+ok "✅ MariaDB installé avec succès.\n"
+sudo mysql <<EOF
+ALTER USER 'root'@'localhost'
+IDENTIFIED VIA mysql_native_password
+USING PASSWORD('$MYSQL_ROOT_PASSWORD');
+FLUSH PRIVILEGES;
+EOF
+info "🔑 Le mot de passe root de MariaDb est : $MYSQL_ROOT_PASSWORD\n"
+
+# ----------------------------
+# Redis
+# ----------------------------
+info "📦 Installation de Redis..."
+sudo apt-get install -y --no-install-recommends redis-server &> /dev/null 2>&1
+sudo sed -ri 's/supervised no/supervised systemd/g' /etc/redis/redis.conf &> /dev/null 2>&1
+sudo systemctl enable redis-server.service  &> /dev/null 2>&1
+ok "✅ Redis installé avec succès.\n"
+
+# ----------------------------
+# PHP 8.4 (FPM)
+# ----------------------------
+info "📦 Installation de PHP 8.4 (FPM)..."
+sudo add-apt-repository ppa:ondrej/php -y &> /dev/null 2>&1
+sudo apt-get update -qq &> /dev/null 2>&1
+sudo apt-get upgrade -y -qq &> /dev/null 2>&1
+sudo apt-get install -y --no-install-recommends \
+  php8.4-fpm \
+  php8.4-cli \
+  php8.4-dev \
+  php8.4-common \
+  php8.4-mysql \
+  php8.4-sqlite3 \
+  php8.4-mbstring \
+  php8.4-intl \
+  php8.4-gd \
+  php8.4-dom \
+  php8.4-opcache \
+  php8.4-ssh2 \
+  php8.4-rrd \
+  php8.4-yaml \
+  php8.4-apcu \
+  php8.4-memcached \
+  php8.4-curl \
+  php8.4-zip \
+  php8.4-xml \
+  php8.4-phpdbg \
+  php-redis \
+  &> /dev/null
+sudo a2dismod php8.4 &> /dev/null || true
+sudo a2dismod php8.3 &> /dev/null || true
+sudo a2enconf php8.4-fpm &> /dev/null
+sudo update-alternatives --set php /usr/bin/php8.4
+sudo update-alternatives --set phar /usr/bin/phar8.4
+sudo update-alternatives --set phar.phar /usr/bin/phar.phar8.4
+sudo systemctl restart php8.4-fpm &> /dev/null 2>&1
+sudo systemctl restart apache2 &> /dev/null 2>&1
+sudo tee /var/www/html/phpinfo.php > /dev/null <<'EOF'
+<?php
+phpinfo();
+EOF
+sudo chmod 644 /var/www/html/phpinfo.php
+sudo tee /etc/apache2/conf-available/phpinfo.conf > /dev/null <<'EOF'
+Alias /phpinfo /var/www/html/phpinfo.php
+
+<Directory /var/www>
+    Require all granted
+</Directory>
+
+<FilesMatch phpinfo\.php$>
+    SetHandler "proxy:unix:/run/php/php8.4-fpm.sock|fcgi://localhost"
+</FilesMatch>
+EOF
+sudo a2enconf phpinfo &> /dev/null 2>&1
+sudo systemctl restart apache2 &> /dev/null 2>&1
+ok "✅ PHP 8.4 FPM installé avec succès.\n"
+
+# ----------------------------
+# MongoDB
+# ----------------------------
+info "📦 Installation de MongoDb..."
+curl -fsSL https://pgp.mongodb.com/server-${MONGODB_VERSION}.asc \
+  | gpg --dearmor -o /usr/share/keyrings/mongodb-server-${MONGODB_VERSION}.gpg
+echo "deb [signed-by=/usr/share/keyrings/mongodb-server-${MONGODB_VERSION}.gpg] \
+https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/${MONGODB_VERSION} multiverse" \
+| tee /etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list
+apt-get update -y &> /dev/null 2>&1
+apt-get install -y mongodb-org &> /dev/null 2>&1
+sed -i 's/^  bindIp:.*$/  bindIp: 127.0.0.1/' /etc/mongod.conf
+systemctl daemon-reexec
+systemctl enable mongod
+systemctl restart mongod
+ok "✅ MongoDb installé avec succès.\n"
+
+# ----------------------------
+# Node.js
+# ----------------------------
+info "📦 Installation de Node.js..."
+curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash - &> /dev/null 2>&1
+sudo apt-get install -y --no-install-recommends nodejs &> /dev/null 2>&1
+sudo npm install --global npm@latest  &> /dev/null 2>&1
+sudo npm install --global yarn  &> /dev/null 2>&1
+sudo npm install --global gulp-cli  &> /dev/null 2>&1
+sudo npm install --global bower &> /dev/null 2>&1
+ok "✅ Node.js, npm, yarn, gulp-cli, et bower ont été installés avec succès.\n"
+
+# ----------------------------
+# Composer + docs renderer
+# ----------------------------
+info "📦 Installation de Composer..."
+sudo php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &> /dev/null 2>&1
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer  &> /dev/null 2>&1
+sudo php -r "unlink('composer-setup.php');" &> /dev/null 2>&1
+ok "✅ Composer installé avec succès.\n"
+sudo chmod a+w /var/www/html
+cd /var/www/html
+composer init \
+    --name="project/docs" \
+    --description="Project documentation renderer" \
+    --type="project" \
+    --no-interaction
+sudo chmod a+w composer.json
+composer require fastvolt/markdown --no-interaction &> /dev/null 2>&1
+
+
+# ----------------------------
+# Development environment
+# ----------------------------
+info "🔧 Configuration de l'environnement de développement (permissions, inotify, cron jobs)..."
+sudo chgrp -R www-data /var/www&> /dev/null 2>&1
+echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf &> /dev/null 2>&1
+sudo sysctl -p &> /dev/null 2>&1
+composer global require deployer/deployer &> /dev/null 2>&1
+echo "export PATH=\"$HOME/.composer/vendor/bin:$PATH\"" >> ~/.bashrc
+source /home/vagrant/.bashrc
+ok "✅ Environnement de développement configuré.\n"
+
+# ----------------------------
+# GitHub CLI
+# ----------------------------
+info "▶ Installation de GitHub CLI (gh)"
+
+if ! command -v gh >/dev/null 2>&1; then
+  sudo apt update
+  sudo apt install -y curl ca-certificates gnupg
+
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+    | sudo tee /usr/share/keyrings/githubcli-archive-keyring.gpg > /dev/null
+
+  sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+    | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
+  sudo apt update
+  sudo apt install -y gh
+
+  ok "✔ GitHub CLI installé"
+else
+  warn "✔ GitHub CLI déjà installé"
+fi
+
+# ----------------------------
+# Done
+# ----------------------------
+ok "✅ Provisionnement terminé"
+info "✅  Nous sommes prêts ! Rendez-vous dans le navigateur web sur :\n   http://$VM_IP"
+info "\n\n🚀 Happy coding!\n\n"
+echo "+--------------------------------------------"
