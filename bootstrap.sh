@@ -83,7 +83,7 @@ info "🔧 Configuration d'Apache2"
 sudo a2enmod rewrite headers expires &> /dev/null 2>&1
 # Define global server name
 echo "ServerName ${VM_DOMAIN}" > /etc/apache2/conf-available/servername.conf
-sudo a2enconf servername
+sudo a2enconf servername &> /dev/null 2>&1
 # Install certificates
 sudo mkdir -p /etc/apache2/ssl
 sudo cp /var/www/infra/certs/wildcard.local.pem /etc/apache2/ssl/wildcard.local.pem
@@ -91,7 +91,7 @@ sudo cp /var/www/infra/certs/wildcard.local-key.pem /etc/apache2/ssl/wildcard.lo
 sudo chmod 600 /etc/apache2/ssl/wildcard.local-key.pem
 sudo chmod 644 /etc/apache2/ssl/wildcard.local.pem
 # Disable default 000 site and move it at 999
-a2dissite 000-default
+a2dissite 000-default &> /dev/null 2>&1
 # Redirect IP-based access to FQDN-based SSL access
 sudo tee /etc/apache2/sites-available/999-default.conf > /dev/null <<EOF
 <VirtualHost *:80>
@@ -121,8 +121,8 @@ sudo tee /etc/apache2/sites-available/999-default-ssl.conf > /dev/null <<EOF
     CustomLog /var/www/stack/logs/default_ssl_access.log combined
 </VirtualHost>
 EOF
-a2ensite 999-default
-a2ensite 999-default-ssl
+a2ensite 999-default &> /dev/null 2>&1
+a2ensite 999-default-ssl &> /dev/null 2>&1
 sudo rm -rf /etc/apache2/sites-available/000-default.conf
 sudo rm -rf /etc/apache2/sites-available/default-ssl.conf
 # Create logs dir
