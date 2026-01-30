@@ -1,0 +1,3 @@
+/.vagrant
+/certs/*.pem
+/certs/*.key
