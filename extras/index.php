@@ -1,7 +1,10 @@
 <?php
 declare(strict_types=1);
+
+use FastVolt\Helper\Markdown;
+
 require __DIR__ . '/vendor/autoload.php';
-use install\extras\vendor\fastvolt\markdown\src\Markdown;
+
 // ----------------------------------
 // Configuration
 // ----------------------------------
