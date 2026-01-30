@@ -86,9 +86,9 @@ echo "ServerName ${VM_DOMAIN}" > /etc/apache2/conf-available/servername.conf
 sudo a2enconf servername
 # Install certificates
 sudo mkdir -p /etc/apache2/ssl
-sudo cp /var/www/infra/certs/wildcard.local.key /etc/apache2/ssl/wildcard.local.key
-sudo cp /var/www/infra/certs/wildcard.local.pem /etc/apache2/ssl/wildcard.local.dev.pem
-sudo chmod 600 /etc/apache2/ssl/wildcard.local.key
+sudo cp /var/www/infra/certs/wildcard.local.pem /etc/apache2/ssl/wildcard.local.pem
+sudo cp /var/www/infra/certs/wildcard.local-key.pem /etc/apache2/ssl/wildcard.local-key.pem
+sudo chmod 600 /etc/apache2/ssl/wildcard.local-key.pem
 sudo chmod 644 /etc/apache2/ssl/wildcard.local.pem
 # Disable default 000 site and move it at 999
 a2dissite 000-default
@@ -114,8 +114,8 @@ sudo tee /etc/apache2/sites-available/999-default-ssl.conf > /dev/null <<EOF
     </FilesMatch>
 
     SSLEngine on
-    SSLCertificateFile /etc/apache2/ssl/wildcard.local.key.pem
-    SSLCertificateKeyFile /etc/apache2/ssl/wildcard.local.key.key
+    SSLCertificateFile /etc/apache2/ssl/wildcard.local.pem
+    SSLCertificateKeyFile /etc/apache2/ssl/wildcard.local-key.pem
 
     ErrorLog /var/www/stack/logs/default_ssl_error.log
     CustomLog /var/www/stack/logs/default_ssl_access.log combined
@@ -126,10 +126,10 @@ a2ensite 999-default-ssl
 sudo rm -rf /etc/apache2/sites-available/000-default.conf
 sudo rm -rf /etc/apache2/sites-available/default-ssl.conf
 # Create logs dir
-sudo mkdir -p /var/www/stack/logs &> /dev/null 2>&1
+sudo mkdir -p /var/www/infra/logs &> /dev/null 2>&1
 # Map extras content to /var/www/html
 sudo rm -rf /var/www/html
-sudo ln -s /var/www/stack/extras /var/www/html
+sudo ln -s /var/www/infra/extras /var/www/html
 # Activate required Apache modules and restart
 info "🔁 Redémarage du service Apache2..."
 sudo a2enmod ssl proxy proxy_fcgi proxy_http
