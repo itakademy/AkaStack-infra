@@ -132,6 +132,6 @@ sudo rm -rf /var/www/html
 sudo ln -s /var/www/infra/extras /var/www/html
 # Activate required Apache modules and restart
 info "🔁 Redémarage du service Apache2..."
-sudo a2enmod ssl proxy proxy_fcgi proxy_http
+sudo a2enmod ssl proxy proxy_fcgi proxy_http &> /dev/null 2>&1
 sudo systemctl restart apache2 &> /dev/null 2>&1
 ok "✅ Apache a redémarré.\n"
