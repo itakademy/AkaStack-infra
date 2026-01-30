@@ -65,3 +65,9 @@ info "📦 Mise à jour du système.."
 sudo apt-get upgrade -y -qq
 ok "✅ Système mis à jour avec succès.\n"
 
+# ----------------------------
+# System utilities
+# ----------------------------
+info "📦 Installation des utilitaires système..."
+sudo apt-get install -y --no-install-recommends build-essential libssl-dev git curl wget zip unzip git-core ca-certificates apt-transport-https locate software-properties-common dirmngr
+ok -e "✅ Utilitaires système installés avec succès.\n"
