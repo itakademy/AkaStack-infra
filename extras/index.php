@@ -5,7 +5,7 @@ use install\extras\vendor\fastvolt\markdown\src\Markdown;
 // ----------------------------------
 // Configuration
 // ----------------------------------
-$readmePath = '/var/www/stack/README.md';
+$readmePath = '/var/www/README.md';
 
 if (!file_exists($readmePath)) {
     http_response_code(404);
