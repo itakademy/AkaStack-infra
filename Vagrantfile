@@ -82,7 +82,7 @@ Vagrant.configure("2") do |config|
     privileged: true,
     env: {
       "VM_IP"        => ENV.fetch("VM_IP"),
-      "VM_NAME"      => ENV.fetch("VM_NAME"),
+      "VM_NAME"      => VM_NAME,
       "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
     }
 
@@ -90,6 +90,6 @@ Vagrant.configure("2") do |config|
   # Debug (optionnel)
   # ================================
 
-  puts "▶ VM #{ENV.fetch("VM_NAME")}"
+  puts "▶ VM #{VM_NAME}"
   puts "▶ IP=#{ENV.fetch("VM_IP")} | CPU=#{ENV.fetch("VM_CPUS")} | RAM=#{ENV.fetch("VM_MEMORY")}MB"
 end
