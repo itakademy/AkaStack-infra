@@ -57,3 +57,11 @@ else
     echo "$ssh_output"
     exit 1
 fi
+
+# ----------------------------
+# System update
+# ----------------------------
+info "📦 Mise à jour du système.."
+sudo apt-get upgrade -y -qq
+ok "✅ Système mis à jour avec succès.\n"
+
