@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
   end
 
   RANDOM_SUFFIX = rand(1000..9999)
-  VM_NAME       = "akastack"-#{ENV.fetch("RANDOM_SUFFIX")}
+  VM_NAME       = "akastack-#{ENV.fetch("RANDOM_SUFFIX")}"
 
   # ================================
   # Base box (Parallels)
