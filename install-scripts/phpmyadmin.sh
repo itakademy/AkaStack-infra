@@ -2,29 +2,31 @@
 source /var/www/infra/install-scripts/common.sh
 
 # -------- Config / Inputs --------
-PROJECT_SRC_DIR="/var/www/project"
-ENV_FILE="$PROJECT_SRC_DIR/project.env"
-
-# -------- Helpers --------
-is_pkg_installed() {
-  # returns 0 if installed, non-zero otherwise
-  dpkg-query -Wf'${db:Status-abbrev}' "$1" 2>/dev/null | grep -q '^i'
-}
+PROJECT_SRC_DIR="/var/www/infra"
 
 # -------- Load .env --------
-if [ -f "$ENV_FILE" ]; then
+ENV_FILE=""
+for candidate in /var/www/.env /var/www/project/project.env /var/www/infra/.env; do
+  if [ -f "$candidate" ]; then
+    ENV_FILE="$candidate"
+    break
+  fi
+done
+
+if [ -n "$ENV_FILE" ]; then
   set -a
   # shellcheck disable=SC1090
   . "$ENV_FILE"
   set +a
-  echo "✅ Loaded environment variables from $ENV_FILE"
+  ok "✅ Loaded environment variables from $ENV_FILE"
 else
-  echo "❌ $ENV_FILE not found. Create it from ../.env.example."
-  exit 1
+  warn "⚠️ No env file found; falling back to provided environment variables."
 fi
 
 # Basic sanity checks for expected vars (adapt if your names differ)
-: "${MYSQL_ROOT_PASSWORD:?Missing MYSQL_ROOT_PASSWORD in $ENV_FILE}"
+: "${MYSQL_ROOT_PASSWORD:?Missing MYSQL_ROOT_PASSWORD (env or .env)}"
+PROJECT_DOMAIN="${PROJECT_DOMAIN:-${VM_DOMAIN:-}}"
+: "${PROJECT_DOMAIN:?Missing PROJECT_DOMAIN or VM_DOMAIN}"
 
 # -------- Remove phpMyAdmin if present (clean) --------
 if is_pkg_installed phpmyadmin; then
@@ -63,8 +65,10 @@ EOF
 echo "🧪 Installing phpMyAdmin (non-interactive)…"
 echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | sudo debconf-set-selections
 sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install phpmyadmin >/dev/null 2>&1
+sudo a2enconf phpmyadmin >/dev/null 2>&1 || true
+sudo systemctl reload apache2 >/dev/null 2>&1 || true
 # Mark phpMyAdmin as installed
-touch /var/www/project/.phpmyadmin.installed
+touch "${PROJECT_SRC_DIR}/.phpmyadmin.installed"
 
 # -------- Final output --------
 cat <<MSG
