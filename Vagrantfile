@@ -84,7 +84,8 @@ Vagrant.configure("2") do |config|
       "VM_IP"        => ENV.fetch("VM_IP"),
       "VM_NAME"      => VM_NAME,
       "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN"),
-      "MYSQL_ROOT_PASSWORD" => ENV.fetch("MYSQL_ROOT_PASSWORD")
+      "MYSQL_ROOT_PASSWORD" => ENV.fetch("MYSQL_ROOT_PASSWORD"),
+      "MONGODB_VERSION" => ENV.fetch("MONGODB_VERSION")
     }
   config.vm.provision "shell",
     path: "install-scripts/mailhog.sh",

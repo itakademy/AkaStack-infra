@@ -256,6 +256,7 @@ ok "✅ Node.js, npm, yarn, gulp-cli, et bower ont été installés avec succès
 # Composer + docs renderer
 # ----------------------------
 info "📦 Installation de Composer..."
+export COMPOSER_ALLOW_SUPERUSER=1
 sudo php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &> /dev/null 2>&1
 sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer  &> /dev/null 2>&1
 sudo php -r "unlink('composer-setup.php');" &> /dev/null 2>&1
