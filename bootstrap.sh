@@ -267,7 +267,7 @@ composer init \
     --name="project/docs" \
     --description="Project documentation renderer" \
     --type="project" \
-    --no-interaction
+    --no-interaction &> /dev/null 2>&1
 sudo chmod a+w composer.json
 composer require fastvolt/markdown --no-interaction &> /dev/null 2>&1
 
@@ -287,19 +287,17 @@ ok "✅ Environnement de développement configuré.\n"
 info "📦 Installation de GitHub CLI (gh)"
 
 if ! command -v gh >/dev/null 2>&1; then
-  sudo apt update
-  sudo apt install -y curl ca-certificates gnupg
+  sudo apt install -y curl ca-certificates gnupg &> /dev/null 2>&1
 
   curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-    | sudo tee /usr/share/keyrings/githubcli-archive-keyring.gpg > /dev/null
+    | sudo tee /usr/share/keyrings/githubcli-archive-keyring.gpg &> /dev/null 2>&1
 
-  sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+  sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg &> /dev/null 2>&1
 
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
-    | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    | sudo tee /etc/apt/sources.list.d/github-cli.list &> /dev/null 2>&1
 
-  sudo apt update
-  sudo apt install -y gh
+  sudo apt install -y gh &> /dev/null 2>&1
 
   ok "✔ GitHub CLI installé"
 else
