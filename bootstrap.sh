@@ -194,13 +194,13 @@ sudo apt-get install -y --no-install-recommends \
   php8.4-xml \
   php8.4-phpdbg \
   php-redis \
-  &> /dev/null
+  &> /dev/null 2>&1
 sudo a2dismod php8.4 &> /dev/null || true
 sudo a2dismod php8.3 &> /dev/null || true
 sudo a2enconf php8.4-fpm &> /dev/null
-sudo update-alternatives --set php /usr/bin/php8.4
-sudo update-alternatives --set phar /usr/bin/phar8.4
-sudo update-alternatives --set phar.phar /usr/bin/phar.phar8.4
+sudo update-alternatives --set php /usr/bin/php8.4 &> /dev/null 2>&1
+sudo update-alternatives --set phar /usr/bin/phar8.4 &> /dev/null 2>&1
+sudo update-alternatives --set phar.phar /usr/bin/phar.phar8.4 &> /dev/null 2>&1
 sudo systemctl restart php8.4-fpm &> /dev/null 2>&1
 sudo systemctl restart apache2 &> /dev/null 2>&1
 sudo tee /var/www/html/phpinfo.php > /dev/null <<'EOF'
@@ -228,16 +228,16 @@ ok "✅ PHP 8.4 FPM installé avec succès.\n"
 # ----------------------------
 info "📦 Installation de MongoDb..."
 curl -fsSL https://pgp.mongodb.com/server-${MONGODB_VERSION}.asc \
-  | gpg --dearmor -o /usr/share/keyrings/mongodb-server-${MONGODB_VERSION}.gpg
+  | gpg --dearmor -o /usr/share/keyrings/mongodb-server-${MONGODB_VERSION}.gpg &> /dev/null 2>&1
 echo "deb [signed-by=/usr/share/keyrings/mongodb-server-${MONGODB_VERSION}.gpg] \
 https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/${MONGODB_VERSION} multiverse" \
-| tee /etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list
+| tee /etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list &> /dev/null 2>&1
 apt-get update -y &> /dev/null 2>&1
 apt-get install -y mongodb-org &> /dev/null 2>&1
 sed -i 's/^  bindIp:.*$/  bindIp: 127.0.0.1/' /etc/mongod.conf
-systemctl daemon-reexec
-systemctl enable mongod
-systemctl restart mongod
+systemctl daemon-reexec &> /dev/null 2>&1
+systemctl enable mongod &> /dev/null 2>&1
+systemctl restart mongod &> /dev/null 2>&1
 ok "✅ MongoDb installé avec succès.\n"
 
 # ----------------------------
