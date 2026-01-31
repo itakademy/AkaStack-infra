@@ -1,5 +1,5 @@
 #!/bin/bash
-source /var/www/infra/scripts/common.sh
+source /var/www/infra/install-scripts/common.sh
 #
 # qa_tools.sh — Install & wire QA tools inside a Laravel project (Vagrant box).
 # Assumes PHP, Composer, Apache already installed and project at /var/www/project/src

@@ -1,5 +1,5 @@
 #!/bin/bash
-source /var/www/infra/scripts/common.sh
+source /var/www/infra/install-scripts/common.sh
 
 # ensure root
 if [ "$EUID" -ne 0 ]; then
