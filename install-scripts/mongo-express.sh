@@ -38,7 +38,7 @@ sudo sed -i "/site:[[:space:]]*{/a\ \ \ \ sessionSecret: \"AkaStackSuperSecret\"
 # --------------------------------------
 echo "▶ Configuring Mongo Express"
 
-sudo tee /opt/mongo-express/config.cjs  <<EOF
+sudo tee /opt/mongo-express/config.cjs &> /dev/null 2>&1  <<EOF
 module.exports = {
   mongodb: {
     server: '127.0.0.1',
@@ -48,7 +48,7 @@ module.exports = {
   site: {
     baseUrl: '/',
     port: 8082,
-    sessionSecret: "oriz0nStackSuperSecret"
+    sessionSecret: "AkaStackSuperSecret"
   },
   useBasicAuth: false,
   options: {
@@ -57,7 +57,7 @@ module.exports = {
 };
 EOF
 
-sudo tee /opt/mongo-express/config.js  <<EOF
+sudo tee /opt/mongo-express/config.js &> /dev/null 2>&1 <<EOF
 import cfg from './config.cjs';
 export default cfg;
 EOF
@@ -67,7 +67,7 @@ EOF
 # --------------------------------------
 echo "▶ Creating systemd service"
 
-sudo tee $SERVICE_FILE  <<EOF
+sudo tee $SERVICE_FILE  &> /dev/null 2>&1 <<EOF
 [Unit]
 Description=Mongo Express
 After=network.target mongod.service
@@ -90,24 +90,24 @@ EOF
 # --------------------------------------
 # Enable & start
 # --------------------------------------
-sudo systemctl daemon-reload
-sudo systemctl enable mongo-express
-sudo systemctl restart mongo-express
+sudo systemctl daemon-reload &> /dev/null 2>&1
+sudo systemctl enable mongo-express &> /dev/null 2>&1
+sudo systemctl restart mongo-express &> /dev/null 2>&1
 
 sudo tee /etc/apache2/sites-available/600-mongo-express.conf > /dev/null <<EOF
 <VirtualHost *:80>
-    ServerName mongo.${PROJECT_DOMAIN}
-    Redirect permanent / https://mongo.${PROJECT_DOMAIN}/
+    ServerName mongo.${VM_DOMAIN}
+    Redirect permanent / https://mongo.${VM_DOMAIN}/
 </VirtualHost>
 EOF
 
 sudo tee /etc/apache2/sites-available/600-mongo-express-ssl.conf > /dev/null <<EOF
 <VirtualHost *:443>
-    ServerName mongo.${PROJECT_DOMAIN}
+    ServerName mongo.${VM_DOMAIN}
 
     SSLEngine on
-    SSLCertificateFile /etc/apache2/ssl/orizon.dev.pem
-    SSLCertificateKeyFile /etc/apache2/ssl/orizon.dev.key
+    SSLCertificateFile /etc/apache2/ssl/wilcard.local.pem
+    SSLCertificateKeyFile /etc/apache2/ssl/wildcard.local-key.pem
 
     ProxyPreserveHost On
     ProxyPass        / http://127.0.0.1:8082/
@@ -119,13 +119,9 @@ sudo tee /etc/apache2/sites-available/600-mongo-express-ssl.conf > /dev/null <<E
 </VirtualHost>
 EOF
 
-sudo a2ensite 600-mongo-express
-sudo a2ensite 600-mongo-express-ssl
-sudo systemctl reload apache2
-# --------------------------------------
-# Marker file
-# --------------------------------------
-touch "$MARKER_FILE"
+sudo a2ensite 600-mongo-express &> /dev/null 2>&1
+sudo a2ensite 600-mongo-express-ssl &> /dev/null 2>&1
+sudo systemctl reload apache2 &> /dev/null 2>&1
 
-echo "✔ Mongo Express installed and running"
-echo "→ Internal URL: https://mongo.${PROJECT_DOMAIN}"
+ok "✔ Mongo Express installed and running"
+info "→ Internal URL: https://mongo.${VM_DOMAIN}"
