@@ -83,9 +83,58 @@ Vagrant.configure("2") do |config|
     env: {
       "VM_IP"        => ENV.fetch("VM_IP"),
       "VM_NAME"      => VM_NAME,
+      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN"),
+      "MYSQL_ROOT_PASSWORD" => ENV.fetch("MYSQL_ROOT_PASSWORD")
+    }
+  config.vm.provision "shell",
+    path: "install-scripts/mailhog.sh",
+    privileged: true,
+    env: {
+      "VM_IP"        => ENV.fetch("VM_IP"),
+      "VM_NAME"      => VM_NAME,
       "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
     }
-
+  config.vm.provision "shell",
+    path: "install-scripts/mongo-express.sh",
+    privileged: true,
+    env: {
+      "VM_IP"        => ENV.fetch("VM_IP"),
+      "VM_NAME"      => VM_NAME,
+      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
+    }
+  config.vm.provision "shell",
+    path: "install-scripts/phpmyadmin.sh",
+    privileged: true,
+    env: {
+      "VM_IP"        => ENV.fetch("VM_IP"),
+      "VM_NAME"      => VM_NAME,
+      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN"),
+      "MYSQL_ROOT_PASSWORD" => ENV.fetch("MYSQL_ROOT_PASSWORD")
+    }
+  config.vm.provision "shell",
+    path: "install-scripts/qa-tools.sh",
+    privileged: true,
+    env: {
+      "VM_IP"        => ENV.fetch("VM_IP"),
+      "VM_NAME"      => VM_NAME,
+      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
+    }
+  config.vm.provision "shell",
+    path: "install-scripts/redis-commander.sh",
+    privileged: true,
+    env: {
+      "VM_IP"        => ENV.fetch("VM_IP"),
+      "VM_NAME"      => VM_NAME,
+      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
+    }
+  config.vm.provision "shell",
+    path: "install-scripts/swagger.sh",
+    privileged: true,
+    env: {
+      "VM_IP"        => ENV.fetch("VM_IP"),
+      "VM_NAME"      => VM_NAME,
+      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
+    }
   # ================================
   # Debug (optionnel)
   # ================================
