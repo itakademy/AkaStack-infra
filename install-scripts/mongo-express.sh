@@ -4,7 +4,6 @@ echo "======================================"
 echo " Installing Mongo Express"
 echo "======================================"
 
-MARKER_FILE="/var/www/project/.mongo-express.installed"
 SERVICE_FILE="/etc/systemd/system/mongo-express.service"
 APP_DIR="/opt/mongo-express"
 
@@ -26,23 +25,13 @@ if ! command -v mongod >/dev/null 2>&1; then
   exit 1
 fi
 
-# shellcheck disable=SC1090
-set -a
-source /var/www/project/project.env
-set +a
-
-# --------------------------------------
-# Install Mongo Express
-# --------------------------------------
-
-echo "▶ Installing Mongo Express"
 sudo rm -rf /opt/mongo-express
-sudo git clone https://github.com/mongo-express/mongo-express.git /opt/mongo-express
+sudo git clone https://github.com/mongo-express/mongo-express.git /opt/mongo-express &> /dev/null 2>&1
 cd /opt/mongo-express
-sudo npm install
+sudo npm install &> /dev/null 2>&1
 
 sudo sed -i 's/8081/8082/g' /opt/mongo-express/config.default.js
-sudo sed -i "/site:[[:space:]]*{/a\ \ \ \ sessionSecret: \"oriz0nStackSuperSecret\"," /opt/mongo-express/config.default.js
+sudo sed -i "/site:[[:space:]]*{/a\ \ \ \ sessionSecret: \"AkaStackSuperSecret\"," /opt/mongo-express/config.default.js
 
 # --------------------------------------
 # Configuration

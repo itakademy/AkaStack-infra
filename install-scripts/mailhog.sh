@@ -19,20 +19,19 @@ esac
 
 info "📦 Installation de Go $GO_VERSION"
 cd /tmp
-curl -fsSL "https://go.dev/dl/${GO_TARBALL}" -o /tmp/go.tar.gz
+curl -fsSL "https://go.dev/dl/${GO_TARBALL}" -o /tmp/go.tar.gz &> /dev/null 2>&1
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf /tmp/go.tar.gz
+sudo tar -C /usr/local -xzf /tmp/go.tar.gz &> /dev/null 2>&1
 
 export PATH="/usr/local/go/bin:$PATH"
 export GOPATH="/opt/go"
 
 mkdir -p "$GOPATH/bin"
 
-echo "Go version:"
 /usr/local/go/bin/go version
 
 echo "Build de MailHog"
-/usr/local/go/bin/go install github.com/mailhog/MailHog@latest
+/usr/local/go/bin/go install github.com/mailhog/MailHog@latest &> /dev/null 2>&1
 
 sudo cp "$GOPATH/bin/MailHog" "$MAILHOG_BIN"
 sudo chmod +x "$MAILHOG_BIN"
@@ -51,14 +50,14 @@ User=root
 WantedBy=multi-user.target
 EOF
 
-sudo systemctl daemon-reload
-sudo systemctl enable mailhog
-sudo systemctl restart mailhog
+sudo systemctl daemon-reload &> /dev/null 2>&1
+sudo systemctl enable mailhog &> /dev/null 2>&1
+sudo systemctl restart mailhog &> /dev/null 2>&1
 
 sleep 2
 
 ss -lntp | grep -q ":8025" || {
-  systemctl status mailhog --no-pager
+  systemctl status mailhog --no-pager &> /dev/null 2>&1
   exit 1
 }
 
@@ -87,10 +86,10 @@ sudo tee /etc/apache2/sites-available/500-mailhog-ssl.conf > /dev/null <<EOF
 </VirtualHost>
 EOF
 
-sudo a2enmod proxy proxy_http ssl headers rewrite
-sudo a2ensite 500-mailhog
-sudo a2ensite 500-mailhog-ssl
-sudo systemctl reload apache2
+sudo a2enmod proxy proxy_http ssl headers rewrite &> /dev/null 2>&1
+sudo a2ensite 500-mailhog &> /dev/null 2>&1
+sudo a2ensite 500-mailhog-ssl &> /dev/null 2>&1
+sudo systemctl reload apache2 &> /dev/null 2>&1
 
 echo "======================================"
 info " MailHog is running"
