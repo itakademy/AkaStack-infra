@@ -1,9 +1,5 @@
-#!/usr/bin/env bash
-#
-# phpmyadmin.sh
-# Installs phpMyAdmin on Debian/Ubuntu guests (Apache assumed).
-# Requires: PHP, Apache, MySQL/MariaDB already installed & running.
-#
+#!/bin/bash
+source /var/www/infra/scripts/common.sh
 
 # -------- Config / Inputs --------
 PROJECT_SRC_DIR="/var/www/project"
