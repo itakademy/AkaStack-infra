@@ -57,7 +57,7 @@ Alias /phpinfo /var/www/infra/extras/phpinfo.php
 EOF
 sudo a2enconf phpinfo &> /dev/null 2>&1
 sudo systemctl restart apache2 &> /dev/null 2>&1
-ok "✅ PHP 8.4 FPM installé avec succès.\n"
+ok "✅ PHP 8.4 FPM installé avec succès."
 echo ""
 
 # ----------------------------

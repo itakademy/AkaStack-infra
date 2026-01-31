@@ -12,7 +12,7 @@ if [ ! -f "$SWAGGER_DIR/index.html" ]; then
   curl -sL https://github.com/swagger-api/swagger-ui/archive/refs/heads/master.tar.gz \
     | tar xz --strip-components=2 swagger-ui-master/dist
 else
-  ok "✔ Swagger UI déjà installé"
+  ok "✔ Swagger UI déjà installé\n"
 fi
 
 info "▶ Configuration de Swagger UI"
@@ -67,9 +67,9 @@ sudo tee /etc/apache2/sites-available/700-swagger-ssl.conf > /dev/null <<EOF
 </VirtualHost>
 EOF
 
-sudo a2ensite 700-swagger
-sudo a2ensite 700-swagger-ssl
-sudo systemctl reload apache2
+sudo a2ensite 700-swagger &> /dev/null 2>&1
+sudo a2ensite 700-swagger-ssl &> /dev/null 2>&1
+sudo systemctl reload apache2 &> /dev/null 2>&1
 
 info "✔ Swagger UI installed"
 info "→ URL: https://swagger.${VM_DOMAIN}"

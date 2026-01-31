@@ -34,4 +34,3 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install phpmyadmin >/dev/null 2>
 sudo a2enconf phpmyadmin >/dev/null 2>&1 || true
 sudo systemctl reload apache2 >/dev/null 2>&1 || true
 ok "✅ phpMyAdmin installé avec succès.\n"
-echo ""

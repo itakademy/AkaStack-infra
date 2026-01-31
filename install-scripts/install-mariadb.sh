@@ -14,5 +14,5 @@ IDENTIFIED VIA mysql_native_password
 USING PASSWORD('${MYSQL_ROOT_PASSWORD}');
 FLUSH PRIVILEGES;
 EOF
-info "🔑 Le mot de passe root de MariaDb est : ${MYSQL_ROOT_PASSWORD}\n"
+info "🔑 Le mot de passe root de MariaDb est : ${MYSQL_ROOT_PASSWORD}"
 echo ""

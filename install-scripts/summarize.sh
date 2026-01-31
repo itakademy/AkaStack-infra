@@ -6,7 +6,7 @@ info " Provisionnement terminé !"
 echo "======================================"
 
 echo ""
-info "Adresse IP publique : {$VM_IP}"
+info "Adresse IP publique : ${VM_IP}"
 info "Web services"
 info "• Project home:      https://${VM_DOMAIN}/"
 info "• Back office:       https://back.${VM_DOMAIN}/"

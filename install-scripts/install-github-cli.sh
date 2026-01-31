@@ -16,7 +16,7 @@ if ! command -v gh >/dev/null 2>&1; then
 
   sudo apt install -y gh &> /dev/null 2>&1
 
-  ok "✔ GitHub CLI installé"
+  ok "✔ GitHub CLI installé\n"
 else
-  warn "✔ GitHub CLI déjà installé"
+  warn "✔ GitHub CLI déjà installé\n"
 fi
