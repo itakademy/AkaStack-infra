@@ -309,7 +309,5 @@ fi
 # ----------------------------
 # Done
 # ----------------------------
-ok "✅ Provisionnement terminé"
-info "✅  Nous sommes prêts ! Rendez-vous dans le navigateur web sur :\n   http://$VM_IP"
-info "\n\n🚀 Happy coding!\n\n"
-echo "+--------------------------------------------"
+ok "✅ Provisionnement de base terminé"
+info "📦 INSTALLATION DES OUTILS TIERS"
