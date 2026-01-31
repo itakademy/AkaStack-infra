@@ -13,4 +13,4 @@ ok "✅ Système mis à jour avec succès.\n"
 # ----------------------------
 info "📦 Installation des utilitaires système..."
 sudo apt-get install -y --no-install-recommends build-essential libssl-dev git curl wget zip unzip git-core ca-certificates apt-transport-https locate software-properties-common dirmngr &> /dev/null 2>&1
-ok -e "✅ Utilitaires système installés avec succès.\n"
+ok "✅ Utilitaires système installés avec succès.\n"

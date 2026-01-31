@@ -39,13 +39,13 @@ sudo update-alternatives --set phar /usr/bin/phar8.4 &> /dev/null 2>&1
 sudo update-alternatives --set phar.phar /usr/bin/phar.phar8.4 &> /dev/null 2>&1
 sudo systemctl restart php8.4-fpm &> /dev/null 2>&1
 sudo systemctl restart apache2 &> /dev/null 2>&1
-sudo tee /var/www/html/phpinfo.php > /dev/null <<'EOF'
+sudo tee /var/www/infra/extras/phpinfo.php > /dev/null <<'EOF'
 <?php
 phpinfo();
 EOF
-sudo chmod 644 /var/www/html/phpinfo.php
+sudo chmod 644 /var/www/infra/extras/phpinfo.php
 sudo tee /etc/apache2/conf-available/phpinfo.conf > /dev/null <<'EOF'
-Alias /phpinfo /var/www/html/phpinfo.php
+Alias /phpinfo /var/www/infra/extras/phpinfo.php
 
 <Directory /var/www>
     Require all granted
