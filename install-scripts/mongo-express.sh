@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-set -e
-
+#!/bin/bash
+source /var/www/infra/scripts/common.sh
 echo "======================================"
 echo " Installing Mongo Express"
 echo "======================================"

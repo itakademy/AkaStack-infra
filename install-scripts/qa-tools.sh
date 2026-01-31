@@ -1,9 +1,5 @@
-#!/usr/bin/env bash
-#
-# qa_tools.sh — Install & wire QA tools inside a Laravel project (Vagrant box).
-# Assumes PHP, Composer, Apache already installed and project at /var/www/project/src
-#
-set -euo pipefail
+#!/bin/bash
+source /var/www/infra/scripts/common.sh
 IFS=$'\n\t'
 
 # ----------------------------
