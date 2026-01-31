@@ -72,4 +72,5 @@ sudo a2ensite 700-swagger-ssl
 sudo systemctl reload apache2
 
 info "✔ Swagger UI installed"
-echo "→ URL: https://swagger.${VM_DOMAIN}\n"
+info "→ URL: https://swagger.${VM_DOMAIN}"
+echo ""
