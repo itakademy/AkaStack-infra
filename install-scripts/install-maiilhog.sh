@@ -1,8 +1,6 @@
 #!/bin/bash
 source /var/www/infra/install-scripts/common.sh
-# ----------------------------
-# Mailhog
-# ----------------------------
+
 info "📦 Installation de MailHog (Go official build)"
 
 MAILHOG_BIN="/usr/local/bin/mailhog"
@@ -30,7 +28,7 @@ mkdir -p "$GOPATH/bin"
 
 /usr/local/go/bin/go version
 
-echo "Build de MailHog"
+info "Build de MailHog"
 /usr/local/go/bin/go install github.com/mailhog/MailHog@latest &> /dev/null 2>&1
 
 sudo cp "$GOPATH/bin/MailHog" "$MAILHOG_BIN"
@@ -91,8 +89,7 @@ sudo a2ensite 500-mailhog &> /dev/null 2>&1
 sudo a2ensite 500-mailhog-ssl &> /dev/null 2>&1
 sudo systemctl reload apache2 &> /dev/null 2>&1
 
-echo "======================================"
-info " MailHog is running"
-info " Web UI : https://mail.${VM_DOMAIN}"
-info " SMTP   : 127.0.0.1:1025"
-echo "======================================"
+
+info " MailHog est installé"
+info " URL : https://mail.${VM_DOMAIN}"
+info " SMTP   : 127.0.0.1:1025\n"

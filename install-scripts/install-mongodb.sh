@@ -1,29 +1,26 @@
 #!/bin/bash
 source /var/www/infra/install-scripts/common.sh
-echo "======================================"
-echo " Installing Mongo Express"
-echo "======================================"
 
-SERVICE_FILE="/etc/systemd/system/mongo-express.service"
-APP_DIR="/opt/mongo-express"
+# ----------------------------
+# MongoDB
+# ----------------------------
+info "📦 Installation de MongoDb..."
+curl -fsSL https://pgp.mongodb.com/server-${MONGODB_VERSION}.asc \
+  | gpg --dearmor -o /usr/share/keyrings/mongodb-server-${MONGODB_VERSION}.gpg &> /dev/null 2>&1
+echo "deb [signed-by=/usr/share/keyrings/mongodb-server-${MONGODB_VERSION}.gpg] \
+https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/${MONGODB_VERSION} multiverse" \
+| tee /etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list &> /dev/null 2>&1
+apt-get update -y &> /dev/null 2>&1
+apt-get install -y mongodb-org &> /dev/null 2>&1
+sed -i 's/^  bindIp:.*$/  bindIp: 127.0.0.1/' /etc/mongod.conf
+systemctl daemon-reexec &> /dev/null 2>&1
+systemctl enable mongod &> /dev/null 2>&1
+systemctl restart mongod &> /dev/null 2>&1
+ok "✅ MongoDb installé avec succès.\n"
 
-# --------------------------------------
-# Prerequisites
-# --------------------------------------
-if ! command -v node >/dev/null 2>&1; then
-  echo "❌ Node.js is required"
-  exit 1
-fi
-
-if ! command -v npm >/dev/null 2>&1; then
-  echo "❌ npm is required"
-  exit 1
-fi
-
-if ! command -v mongod >/dev/null 2>&1; then
-  echo "❌ MongoDB must be installed first"
-  exit 1
-fi
+# ----------------------------
+# Mongo Express
+# ----------------------------
 
 sudo rm -rf /opt/mongo-express
 sudo git clone https://github.com/mongo-express/mongo-express.git /opt/mongo-express &> /dev/null 2>&1
@@ -33,10 +30,7 @@ sudo npm install &> /dev/null 2>&1
 sudo sed -i 's/8081/8082/g' /opt/mongo-express/config.default.js
 sudo sed -i "/site:[[:space:]]*{/a\ \ \ \ sessionSecret: \"AkaStackSuperSecret\"," /opt/mongo-express/config.default.js
 
-# --------------------------------------
-# Configuration
-# --------------------------------------
-echo "▶ Configuring Mongo Express"
+info "▶ Configuration de Mongo Express"
 
 sudo tee /opt/mongo-express/config.cjs &> /dev/null 2>&1  <<EOF
 module.exports = {
@@ -62,10 +56,7 @@ import cfg from './config.cjs';
 export default cfg;
 EOF
 
-# --------------------------------------
-# systemd service
-# --------------------------------------
-echo "▶ Creating systemd service"
+info "▶ Création du service systemd "
 
 sudo tee $SERVICE_FILE  &> /dev/null 2>&1 <<EOF
 [Unit]
@@ -87,9 +78,6 @@ Environment=ME_CONFIG_SITE_PORT=8082
 WantedBy=multi-user.target
 EOF
 
-# --------------------------------------
-# Enable & start
-# --------------------------------------
 sudo systemctl daemon-reload &> /dev/null 2>&1
 sudo systemctl enable mongo-express &> /dev/null 2>&1
 sudo systemctl restart mongo-express &> /dev/null 2>&1
@@ -106,7 +94,7 @@ sudo tee /etc/apache2/sites-available/600-mongo-express-ssl.conf > /dev/null <<E
     ServerName mongo.${VM_DOMAIN}
 
     SSLEngine on
-    SSLCertificateFile /etc/apache2/ssl/wilcard.local.pem
+    SSLCertificateFile /etc/apache2/ssl/wildcard.local.pem
     SSLCertificateKeyFile /etc/apache2/ssl/wildcard.local-key.pem
 
     ProxyPreserveHost On
@@ -123,5 +111,5 @@ sudo a2ensite 600-mongo-express &> /dev/null 2>&1
 sudo a2ensite 600-mongo-express-ssl &> /dev/null 2>&1
 sudo systemctl reload apache2 &> /dev/null 2>&1
 
-ok "✔ Mongo Express installed and running"
-info "→ Internal URL: https://mongo.${VM_DOMAIN}"
+ok "✔ Mongo Express est installé"
+info "→  URL: https://mongo.${VM_DOMAIN}"

@@ -77,69 +77,24 @@ Vagrant.configure("2") do |config|
   # ================================
   # Provisioning
   # ================================
-  config.vm.provision "shell",
-    path: "bootstrap.sh",
-    privileged: true,
-    env: {
-      "VM_IP"        => ENV.fetch("VM_IP"),
-      "VM_NAME"      => VM_NAME,
-      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN"),
-      "MYSQL_ROOT_PASSWORD" => ENV.fetch("MYSQL_ROOT_PASSWORD"),
-      "MONGODB_VERSION" => ENV.fetch("MONGODB_VERSION")
-    }
-  config.vm.provision "shell",
-    path: "install-scripts/mailhog.sh",
-    privileged: true,
-    env: {
-      "VM_IP"        => ENV.fetch("VM_IP"),
-      "VM_NAME"      => VM_NAME,
-      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
-    }
-  config.vm.provision "shell",
-    path: "install-scripts/mongo-express.sh",
-    privileged: true,
-    env: {
-      "VM_IP"        => ENV.fetch("VM_IP"),
-      "VM_NAME"      => VM_NAME,
-      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
-    }
-  config.vm.provision "shell",
-    path: "install-scripts/phpmyadmin.sh",
-    privileged: true,
-    env: {
-      "VM_IP"        => ENV.fetch("VM_IP"),
-      "VM_NAME"      => VM_NAME,
-      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN"),
-      "MYSQL_ROOT_PASSWORD" => ENV.fetch("MYSQL_ROOT_PASSWORD")
-    }
-  config.vm.provision "shell",
-    path: "install-scripts/qa-tools.sh",
-    privileged: true,
-    env: {
-      "VM_IP"        => ENV.fetch("VM_IP"),
-      "VM_NAME"      => VM_NAME,
-      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
-    }
-  config.vm.provision "shell",
-    path: "install-scripts/redis-commander.sh",
-    privileged: true,
-    env: {
-      "VM_IP"        => ENV.fetch("VM_IP"),
-      "VM_NAME"      => VM_NAME,
-      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
-    }
-  config.vm.provision "shell",
-    path: "install-scripts/swagger.sh",
-    privileged: true,
-    env: {
-      "VM_IP"        => ENV.fetch("VM_IP"),
-      "VM_NAME"      => VM_NAME,
-      "VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")
-    }
+  config.vm.provision "shell", path: "bootstrap.sh", privileged: true, env: {"VM_NAME" => VM_NAME}
+  config.vm.provision "shell", path: "install-scripts/system-upgrade.sh", privileged: true, env: {}
+  config.vm.provision "shell", path: "install-scripts/openssh-workaround.sh", privileged: true, env: {}
+  config.vm.provision "shell", path: "install-scripts/check-github-auth.sh", privileged: true, env: {}
+  config.vm.provision "shell", path: "install-scripts/install-apache2.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+  config.vm.provision "shell", path: "install-scripts/install-mariadb.sh", privileged: true, env: {}
+  config.vm.provision "shell", path: "install-scripts/install-php84.sh", privileged: true, env: {}
+  config.vm.provision "shell", path: "install-scripts/install-phpmyadmin.sh", privileged: true, env: {}
+  config.vm.provision "shell", path: "install-scripts/install-nodejs.sh", privileged: true, env: {}
+  config.vm.provision "shell", path: "install-scripts/install-mongodb.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+  config.vm.provision "shell", path: "install-scripts/install-github-cli.sh", privileged: true, env: {}
+  config.vm.provision "shell", path: "install-scripts/install-swagger.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+  config.vm.provision "shell", path: "install-scripts/install-mailhog.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+  config.vm.provision "shell", path: "install-scripts/summarize.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+
   # ================================
   # Debug (optionnel)
   # ================================
-
   puts "▶ VM #{VM_NAME}"
   puts "▶ IP=#{ENV.fetch("VM_IP")} | CPU=#{ENV.fetch("VM_CPUS")} | RAM=#{ENV.fetch("VM_MEMORY")}MB"
 end
