@@ -2,7 +2,7 @@
 source /var/www/infra/install-scripts/common.sh
 
 API_DIR="/var/www/api"
-OUTPUT_HTML="API_DIR/index.html"
+OUTPUT_HTML="${API_DIR}/index.html"
 
 mkdir -p $API_DIR
 
@@ -30,7 +30,7 @@ cat <<'EOF_HTML' > "$OUTPUT_HTML"
 <div class="page">
     <main class="content">
         <div class="content-inner">
-        <h1>Frontend</h1>
+        <h1>API</h1>
         <p>You may create a new API from scratch, use one of our templates or attach an existing git repository. For more informations, see <a href="https://github.com/itakademy/AkaStack/wiki/2.-Installation#choosing-how-to-attach-your-backend-and-frontend" target="_blank">project Wiki</a>.</p>
         </div>
     </main>
