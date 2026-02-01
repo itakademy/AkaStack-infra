@@ -90,7 +90,37 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: "install-scripts/install-github-cli.sh", privileged: true, env: {}
   config.vm.provision "shell", path: "install-scripts/install-swagger.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
   config.vm.provision "shell", path: "install-scripts/install-mailhog.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+  config.vm.provision "shell", path: "install-scripts/install-front.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+  config.vm.provision "shell", path: "install-scripts/install-back.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+  config.vm.provision "shell", path: "install-scripts/install-api.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
   config.vm.provision "shell", path: "install-scripts/summarize.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+
+  # ================================
+  # Ansible (optional) - keep shell as default
+  # ================================
+  # Uncomment to run Ansible in addition to shell provisioning.
+  #
+  # config.vm.provision "ansible" do |ansible|
+  #   ansible.playbook = "install-scripts.yml"
+  #   ansible.inventory_path = "inventory"
+  #   ansible.limit = "all"
+  #   ansible.extra_vars = {
+  #     "vm_domain" => ENV.fetch("VM_DOMAIN"),
+  #     "vm_ip" => ENV.fetch("VM_IP"),
+  #     "mysql_root_password" => ENV.fetch("MYSQL_ROOT_PASSWORD"),
+  #     "mongodb_version" => ENV.fetch("MONGODB_VERSION", "7.0")
+  #   }
+  # end
+  #
+  # Example inventory file (Parallels):
+  # [all]
+  # default ansible_host=127.0.0.1 ansible_connection=ssh ansible_user=vagrant \
+  # ansible_ssh_private_key_file=.vagrant/machines/default/parallels/private_key
+  #
+  # Example inventory file (VirtualBox):
+  # [all]
+  # default ansible_host=127.0.0.1 ansible_connection=ssh ansible_user=vagrant \
+  # ansible_ssh_private_key_file=.vagrant/machines/default/virtualbox/private_key
 
   # ================================
   # Debug (optionnel)
