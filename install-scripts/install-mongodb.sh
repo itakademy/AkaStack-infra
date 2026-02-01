@@ -12,7 +12,7 @@ https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/${MONGODB_VERSION} multive
 | tee /etc/apt/sources.list.d/mongodb-org-${MONGODB_VERSION}.list &> /dev/null 2>&1
 apt-get update -y &> /dev/null 2>&1
 apt-get install -y mongodb-org &> /dev/null 2>&1
-sed -i 's/^  bindIp:.*$/  bindIp: 127.0.0.1/' /etc/mongod.conf
+sed -i 's/^  bindIp:.*$/  bindIp: 127.0.0.1/' /etc/mongod.conf &> /dev/null 2>&1
 systemctl daemon-reexec &> /dev/null 2>&1
 systemctl enable mongod &> /dev/null 2>&1
 systemctl restart mongod &> /dev/null 2>&1
@@ -21,10 +21,13 @@ ok "✅ MongoDb installé avec succès.\n"
 # ----------------------------
 # Mongo Express
 # ----------------------------
+info "📦 Installation de Mongo Express..."
+SERVICE_FILE="/etc/systemd/system/mongo-express.service"
+APP_DIR="/opt/mongo-express"
 
-sudo rm -rf /opt/mongo-express
-sudo git clone https://github.com/mongo-express/mongo-express.git /opt/mongo-express &> /dev/null 2>&1
-cd /opt/mongo-express
+sudo rm -rf "$APP_DIR"
+sudo git clone https://github.com/mongo-express/mongo-express.git "$APP_DIR" &> /dev/null 2>&1
+cd "$APP_DIR"
 sudo npm install &> /dev/null 2>&1
 
 sudo sed -i 's/8081/8082/g' /opt/mongo-express/config.default.js
@@ -32,7 +35,7 @@ sudo sed -i "/site:[[:space:]]*{/a\ \ \ \ sessionSecret: \"AkaStackSuperSecret\"
 
 info "▶ Configuration de Mongo Express"
 
-sudo tee /opt/mongo-express/config.cjs &> /dev/null 2>&1  <<EOF
+sudo tee /opt/mongo-express/config.cjs > /dev/null  <<EOF
 module.exports = {
   mongodb: {
     server: '127.0.0.1',
@@ -51,14 +54,14 @@ module.exports = {
 };
 EOF
 
-sudo tee /opt/mongo-express/config.js &> /dev/null 2>&1 <<EOF
+sudo tee /opt/mongo-express/config.js > /dev/null <<EOF
 import cfg from './config.cjs';
 export default cfg;
 EOF
 
 info "▶ Création du service systemd "
 
-sudo tee $SERVICE_FILE  &> /dev/null 2>&1 <<EOF
+sudo tee "$SERVICE_FILE" > /dev/null  <<EOF
 [Unit]
 Description=Mongo Express
 After=network.target mongod.service
@@ -113,4 +116,3 @@ sudo systemctl reload apache2 &> /dev/null 2>&1
 
 ok "✔ Mongo Express est installé"
 info "→  URL: https://mongo.${VM_DOMAIN}"
-echo ""
