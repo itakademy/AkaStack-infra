@@ -85,6 +85,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: "install-scripts/install-mariadb.sh", privileged: true, env: {}
   config.vm.provision "shell", path: "install-scripts/install-php84.sh", privileged: true, env: {}
   config.vm.provision "shell", path: "install-scripts/install-phpmyadmin.sh", privileged: true, env: {}
+  config.vm.provision "shell", path: "install-scripts/install-python3.sh", privileged: true, env: {}
   config.vm.provision "shell", path: "install-scripts/install-nodejs.sh", privileged: true, env: {}
   config.vm.provision "shell", path: "install-scripts/install-mongodb.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
   config.vm.provision "shell", path: "install-scripts/install-github-cli.sh", privileged: true, env: {}
