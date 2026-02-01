@@ -2,7 +2,6 @@
 source /var/www/infra/install-scripts/common.sh
 
 BACK_DIR="/var/www/back"
-README_PATH="BACK_DIR/README.md"
 OUTPUT_HTML="BACK_DIR/index.html"
 
 mkdir -p $BACK_DIR
@@ -42,7 +41,7 @@ cat <<'EOF_HTML' > "$OUTPUT_HTML"
 EOF_HTML
 
 # Apache vhost
-info "🔧 Configuring Apache vhost for front"
+info "🔧 Configuring Apache vhost for back"
 sudo tee /etc/apache2/sites-available/300-back.conf > /dev/null <<EOF_APACHE
 <VirtualHost *:80>
     ServerName back.${VM_DOMAIN}

@@ -2,7 +2,6 @@
 source /var/www/infra/install-scripts/common.sh
 
 FRONT_DIR="/var/www/front"
-README_PATH="$FRONT_DIR/README.md"
 OUTPUT_HTML="$FRONT_DIR/index.html"
 
 mkdir -p $FRONT_DIR

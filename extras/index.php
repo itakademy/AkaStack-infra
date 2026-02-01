@@ -104,7 +104,7 @@ if (count($parts) >= 2) {
             Endpoints :
             <a href="https://www.<?= $rootDomain ?>" target="_blank">Front-end</a> |
             <a href="https://back.<?= $rootDomain ?>" target="_blank">Back-end</a> |
-            <a href="https://api.<?= $rootDomain ?>/api" target="_blank">API</a> |
+            <a href="https://api.<?= $rootDomain ?>" target="_blank">API</a> |
             <a href="https://swagger.<?= $rootDomain ?>" target="_blank">Swagger</a> |
             <a href="/phpmyadmin" target="_blank">PhpMyAdmin</a> |
             <a href="/phpinfo" target="_blank">PhpInfo()</a> |

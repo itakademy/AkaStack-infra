@@ -88,6 +88,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: "install-scripts/install-python3.sh", privileged: true, env: {}
   config.vm.provision "shell", path: "install-scripts/install-nodejs.sh", privileged: true, env: {}
   config.vm.provision "shell", path: "install-scripts/install-mongodb.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
+  config.vm.provision "shell", path: "install-scripts/install-redis.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
   config.vm.provision "shell", path: "install-scripts/install-github-cli.sh", privileged: true, env: {}
   config.vm.provision "shell", path: "install-scripts/install-swagger.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}
   config.vm.provision "shell", path: "install-scripts/install-mailhog.sh", privileged: true, env: {"VM_DOMAIN"    => ENV.fetch("VM_DOMAIN")}

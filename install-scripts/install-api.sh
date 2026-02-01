@@ -2,7 +2,6 @@
 source /var/www/infra/install-scripts/common.sh
 
 API_DIR="/var/www/api"
-README_PATH="API_DIR/README.md"
 OUTPUT_HTML="API_DIR/index.html"
 
 mkdir -p $API_DIR
