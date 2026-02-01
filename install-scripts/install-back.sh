@@ -5,6 +5,8 @@ BACK_DIR="/var/www/back"
 README_PATH="BACK_DIR/README.md"
 OUTPUT_HTML="BACK_DIR/index.html"
 
+mkdir -p $BACK_DIR
+
 info "🧾 Writing back index.html"
 cat <<'EOF_HTML' > "$OUTPUT_HTML"
 <!DOCTYPE html>

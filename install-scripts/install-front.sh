@@ -5,6 +5,8 @@ FRONT_DIR="/var/www/front"
 README_PATH="$FRONT_DIR/README.md"
 OUTPUT_HTML="$FRONT_DIR/index.html"
 
+mkdir -p $FRONT_DIR
+
 info "🧾 Writing front index.html"
 cat <<'EOF_HTML' > "$OUTPUT_HTML"
 <!DOCTYPE html>
