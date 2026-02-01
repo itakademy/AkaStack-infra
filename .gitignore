@@ -1,3 +1,4 @@
 /.vagrant
 /certs/*.pem
-/certs/*.key
+/docker/certs/*.pem
+/docker/.env

@@ -1,0 +1,129 @@
+services:
+  # --- ENTRY POINT: APACHE REVERSE PROXY ---
+  apache:
+    build:
+      context: ./apache
+    container_name: akastack-apache
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      VM_DOMAIN: ${VM_DOMAIN:-akatest.local}
+    volumes:
+      - ../extras:/var/www/extras:ro
+      - ./apache/www:/var/www
+      - ./certs:/usr/local/apache2/conf/certs:ro
+      - ./apache/conf/vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf:ro
+    depends_on:
+      - php-fpm
+      - mongodb
+      - mariadb
+    networks:
+      - akastack-network
+    restart: unless-stopped
+
+  # --- BACKEND: PHP 8.4 FPM ---
+  php-fpm:
+    image: php:8.4-fpm
+    container_name: akastack-php-fpm
+    volumes:
+      - ../extras:/var/www/extras:ro
+      - ./apache/www:/var/www
+    networks:
+      - akastack-network
+    restart: unless-stopped
+
+  # --- DATABASES ---
+  mariadb:
+    image: mariadb:10.11
+    container_name: akastack-mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - akastack-network
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7
+    container_name: akastack-mongodb
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - akastack-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: akastack-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - akastack-network
+    restart: unless-stopped
+
+  # --- TOOLS (Accessible via Apache Reverse Proxy) ---
+  mailhog:
+    image: mailhog/mailhog:latest
+    platform: linux/amd64
+    container_name: akastack-mailhog
+    # Pas de ports ici, on passe par le proxy Apache
+    networks:
+      - akastack-network
+    restart: unless-stopped
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: akastack-mongo-express
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017
+    networks:
+      - akastack-network
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    platform: linux/amd64
+    container_name: akastack-redis-commander
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    networks:
+      - akastack-network
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: akastack-phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    networks:
+      - akastack-network
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+
+  swagger:
+    image: swaggerapi/swagger-ui:latest
+    container_name: akastack-swagger
+    environment:
+      SWAGGER_JSON: /api/docs.json
+    networks:
+      - akastack-network
+    restart: unless-stopped
+
+networks:
+  akastack-network:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+  redis_data:
+  mongodb_data:
