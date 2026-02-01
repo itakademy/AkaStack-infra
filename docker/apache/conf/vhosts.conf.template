@@ -1,0 +1,157 @@
+ServerName localhost
+
+<VirtualHost *:80>
+    ServerName __VM_DOMAIN__
+    Redirect permanent / https://__VM_DOMAIN__/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName __VM_DOMAIN__
+    DocumentRoot /var/www/extras
+
+    <Directory /var/www/extras>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    Alias /phpinfo /var/www/extras/phpinfo.php
+    ProxyPreserveHost On
+    ProxyPass        /phpmyadmin http://phpmyadmin/
+    ProxyPassReverse /phpmyadmin http://phpmyadmin/
+
+    <FilesMatch \.php$>
+        SetHandler "proxy:fcgi://php-fpm:9000"
+    </FilesMatch>
+
+    SSLEngine on
+    SSLCertificateFile /usr/local/apache2/conf/certs/wildcard.local.pem
+    SSLCertificateKeyFile /usr/local/apache2/conf/certs/wildcard.local-key.pem
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName www.__VM_DOMAIN__
+    Redirect permanent / https://www.__VM_DOMAIN__/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName www.__VM_DOMAIN__
+    DocumentRoot /var/www/front
+
+    <Directory /var/www/front>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    SSLEngine on
+    SSLCertificateFile /usr/local/apache2/conf/certs/wildcard.local.pem
+    SSLCertificateKeyFile /usr/local/apache2/conf/certs/wildcard.local-key.pem
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName back.__VM_DOMAIN__
+    Redirect permanent / https://back.__VM_DOMAIN__/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName back.__VM_DOMAIN__
+    DocumentRoot /var/www/back
+
+    <Directory /var/www/back>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    SSLEngine on
+    SSLCertificateFile /usr/local/apache2/conf/certs/wildcard.local.pem
+    SSLCertificateKeyFile /usr/local/apache2/conf/certs/wildcard.local-key.pem
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName api.__VM_DOMAIN__
+    Redirect permanent / https://api.__VM_DOMAIN__/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName api.__VM_DOMAIN__
+    DocumentRoot /var/www/api
+
+    <Directory /var/www/api>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    SSLEngine on
+    SSLCertificateFile /usr/local/apache2/conf/certs/wildcard.local.pem
+    SSLCertificateKeyFile /usr/local/apache2/conf/certs/wildcard.local-key.pem
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName swagger.__VM_DOMAIN__
+    Redirect permanent / https://swagger.__VM_DOMAIN__/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName swagger.__VM_DOMAIN__
+
+    SSLEngine on
+    SSLCertificateFile /usr/local/apache2/conf/certs/wildcard.local.pem
+    SSLCertificateKeyFile /usr/local/apache2/conf/certs/wildcard.local-key.pem
+
+    ProxyPreserveHost On
+    ProxyPass        / http://swagger:8080/
+    ProxyPassReverse / http://swagger:8080/
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName mail.__VM_DOMAIN__
+    Redirect permanent / https://mail.__VM_DOMAIN__/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName mail.__VM_DOMAIN__
+
+    SSLEngine on
+    SSLCertificateFile /usr/local/apache2/conf/certs/wildcard.local.pem
+    SSLCertificateKeyFile /usr/local/apache2/conf/certs/wildcard.local-key.pem
+
+    ProxyPreserveHost On
+    ProxyPass        / http://mailhog:8025/
+    ProxyPassReverse / http://mailhog:8025/
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName mongo.__VM_DOMAIN__
+    Redirect permanent / https://mongo.__VM_DOMAIN__/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName mongo.__VM_DOMAIN__
+
+    SSLEngine on
+    SSLCertificateFile /usr/local/apache2/conf/certs/wildcard.local.pem
+    SSLCertificateKeyFile /usr/local/apache2/conf/certs/wildcard.local-key.pem
+
+    ProxyPreserveHost On
+    ProxyPass        / http://mongo-express:8082/
+    ProxyPassReverse / http://mongo-express:8082/
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName redis.__VM_DOMAIN__
+    Redirect permanent / https://redis.__VM_DOMAIN__/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName redis.__VM_DOMAIN__
+
+    SSLEngine on
+    SSLCertificateFile /usr/local/apache2/conf/certs/wildcard.local.pem
+    SSLCertificateKeyFile /usr/local/apache2/conf/certs/wildcard.local-key.pem
+
+    ProxyPreserveHost On
+    ProxyPass        / http://redis-commander:8081/
+    ProxyPassReverse / http://redis-commander:8081/
+</VirtualHost>
