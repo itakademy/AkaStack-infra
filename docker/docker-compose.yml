@@ -8,7 +8,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      VM_DOMAIN: ${VM_DOMAIN:-akatest.local}
+      VM_DOMAIN: ${VM_DOMAIN:-akastack.local}
     volumes:
       - ../extras:/var/www/extras:ro
       - ./apache/www:/var/www
